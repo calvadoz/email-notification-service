@@ -1,0 +1,19 @@
+{
+  "name": "email-notification-service",
+  "version": "1.0.0",
+  "description": "Asynchronous email notification service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calvadoz/email-notification-service.git"
+  },
+  "author": "Kelvin Wu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calvadoz/email-notification-service/issues"
+  },
+  "homepage": "https://github.com/calvadoz/email-notification-service#readme"
+}
