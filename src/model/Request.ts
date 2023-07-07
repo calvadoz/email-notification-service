@@ -1,15 +1,17 @@
-import mongoose, { Schema, Document, model } from 'mongoose';
+import { Schema, Document, model } from 'mongoose'
 
-export interface MessageRequest extends Document {
-  payload: object;
-}
+// export interface MessageRequest extends Document {
+//   payload: object
+// }
 
-const RequestSchema: Schema = new Schema({
-    payload: { type: Object, required: true },
-    email: { type: String, required: true },
-    status: { type: String, default: 'pending' },
-    timestamp: { type: Date, default: Date.now },
-    // tbd
-});
+const messageRequestSchema: Schema = new Schema({
+  payload: { type: Object, required: true },
+  email: { type: String, required: true },
+  status: { type: String, default: 'pending' },
+  timestamp: { type: Date, default: Date.now }
+  // tbd
+})
 
-export default model<MessageRequest>('Request', RequestSchema);
+const MessageRequest = model('MessageRequest', messageRequestSchema)
+
+export default MessageRequest

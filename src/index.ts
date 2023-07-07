@@ -9,7 +9,8 @@ const port = process.env.PORT || 4000
 // setting up mongoDB
 const dbUsername = process.env.MONGODB_USERNAME
 const dbPassword = process.env.MONGODB_PASSWORD
-const dbUri = `mongodb+srv://${dbUsername}:${dbPassword}@cluster0.atbza.mongodb.net/?retryWrites=true&w=majority`
+const dbName = process.env.MONGODB_DBNAME
+const dbUri = `mongodb+srv://${dbUsername}:${dbPassword}@cluster0.atbza.mongodb.net/${dbName}?retryWrites=true&w=majority`
 const app = express()
 
 async function connectToMongoDB() {
