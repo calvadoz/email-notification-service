@@ -32,10 +32,14 @@ async function connectToMongoDB() {
     })
 
     // email service endpoint
-    app.get('/api/email/send', sendEmail.sendEmailHandler)
+    app.post('/api/email/send', sendEmail.sendEmailHandler)
 
     // hook route entry point
     app.post('/api/hook', hookController.hookRequestHandler)
+
+    app.get('/auth/callback', (req: Request, res: Response) => {
+      res.status(200).json(JSON.stringify(req))
+    })
 
     app.listen(port, () => console.log(`Server is running on port ${port}`))
   } catch (error) {
