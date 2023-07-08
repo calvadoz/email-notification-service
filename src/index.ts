@@ -38,6 +38,12 @@ async function connectToMongoDB() {
     // hook route entry point
     app.post('/api/hook', hookController.hookRequestHandler)
 
+    // list all
+    app.get('/api/email/list', async (req: Request, res: Response) => {
+      const messageList = await MessageRequest.find()
+      res.status(200).json(messageList.reverse())
+    })
+
     app.get('/auth/callback', (req: Request, res: Response) => {
       res.status(200).json(JSON.stringify(req))
     })
