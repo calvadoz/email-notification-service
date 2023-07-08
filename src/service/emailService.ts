@@ -78,7 +78,7 @@ async function authorize(): Promise<
     scope: ['https://www.googleapis.com/auth/gmail.send']
   })
 
-  console.log('Authorize this app by visiting this URL:', authUrl)
+  console.log('\nAuthorize app by visiting this URL => ', authUrl)
 
   const code = await getAuthorizationCode()
 
@@ -120,7 +120,7 @@ function getAuthorizationCode(): Promise<string> {
   })
 
   return new Promise((resolve) => {
-    rl.question('Paste the authorization code from the URL: ', (code) => {
+    rl.question('\nPaste the authorization code from the URL: ', (code) => {
       rl.close()
       resolve(code)
     })

@@ -31,12 +31,12 @@ const hookRequestHandler = async (req: Request, res: Response) => {
       payload
     })
 
-    newMessageRequest
-      .save()
-      .then(() =>
-        console.log('Message request saved successfully', newMessageRequest)
-      )
-      .catch((err) => console.error('Error while saving request ', err))
+    try {
+      await newMessageRequest.save()
+      console.log('Message request saved successfully', newMessageRequest)
+    } catch (err) {
+      console.error('Error while saving request ', err)
+    }
 
     res.sendStatus(200)
     // additional call to EmailService asynchronously without waiting
@@ -49,7 +49,6 @@ const hookRequestHandler = async (req: Request, res: Response) => {
 
 function validatePayload(payload: EmailMessage) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  // console.log('Is Email Valid: ', emailRegex.test(payload.to))
   if (!payload) return false
   if (!emailRegex.test(payload.to)) return false
   return true
