@@ -3,6 +3,7 @@ import hookController from './controller/hookController'
 import sendEmail from './service/emailService'
 import dotenv from 'dotenv'
 import mongoose, { ConnectOptions } from 'mongoose'
+import MessageRequest from './model/MessageRequest'
 
 dotenv.config()
 
@@ -40,6 +41,8 @@ async function connectToMongoDB() {
     app.get('/auth/callback', (req: Request, res: Response) => {
       res.status(200).json(JSON.stringify(req))
     })
+
+
 
     app.listen(port, () => console.log(`Server is running on port ${port}`))
   } catch (error) {

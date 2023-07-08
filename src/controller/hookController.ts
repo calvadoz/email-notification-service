@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import MessageRequest from '../model/MessageRequest'
-import { Client } from 'undici'
+import axios from 'axios'
 
 type EmailMessage = {
   to: string
@@ -19,7 +19,6 @@ const gatewayURI = process.env.GATEWAY_URI || 'http://localhost:4000'
 
 const hookRequestHandler = async (req: Request, res: Response) => {
   try {
-    const client = new Client(gatewayURI)
     // destructure  payload from body
     const { payload }: MessageBody = req.body
     if (!validatePayload(payload)) {
@@ -40,15 +39,8 @@ const hookRequestHandler = async (req: Request, res: Response) => {
       .catch((err) => console.error('Error while saving request ', err))
 
     res.sendStatus(200)
-    // call EmailService here then asynchronously without waiting
-    client.request({
-      path: '/api/email/send',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newMessageRequest)
-    })
+    // additional call to EmailService asynchronously without waiting
+    axios.post(`${gatewayURI}/api/email/send`, newMessageRequest)
   } catch (err) {
     console.error('Error handling incoming request: ', err)
     res.sendStatus(500)
