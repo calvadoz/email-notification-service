@@ -2,6 +2,7 @@ import { google, gmail_v1 } from 'googleapis'
 import readline from 'readline'
 import { Request, Response } from 'express'
 import { EmailMessage } from '../model/types'
+import MessageRequest from '../model/MessageRequest'
 
 const sendEmailHandler = async (req: Request, res: Response) => {
   // Define the default email content
@@ -9,13 +10,14 @@ const sendEmailHandler = async (req: Request, res: Response) => {
   const defaultSubject = 'Greetings from Kelvin.'
   const defaultMessage =
     'If you received this message, thank God my Gmail API is working, thanks for being part of the test. Have a nice day :)'
+  const { _id: messageId } = req.body
+
   try {
     const {
       to: recipient,
       subject: title,
       message: body
     }: EmailMessage = req.body.payload
-    const { _id: id } = req.body
 
     // Authorize the client
     const auth = await authorize()
@@ -39,13 +41,23 @@ const sendEmailHandler = async (req: Request, res: Response) => {
       }
     })
 
-    //update mongoDB data upon successful
     console.log('Email sent:', gmailRes.data)
+    // update mongoDB data upon successful
+    await updateEmailStatus(messageId, true)
     res.status(200)
   } catch (error) {
     console.error('Error sending email:', error)
+    await updateEmailStatus(messageId, false)
     res.status(500).json({ errorMessage: 'Failed to send Email' })
   }
+}
+
+async function updateEmailStatus(messageId: string, isSuccess: boolean) {
+  const updateMessage = await MessageRequest.findById(messageId)
+  // don't do anything if there is nothing found in db, ignore this process completely as this is asynchronous ops
+  if (!updateMessage) return
+  updateMessage.status = isSuccess ? 'delivered' : 'failed'
+  await updateMessage.save()
 }
 
 async function authorize(): Promise<

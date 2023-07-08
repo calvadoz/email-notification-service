@@ -42,8 +42,6 @@ async function connectToMongoDB() {
       res.status(200).json(JSON.stringify(req))
     })
 
-
-
     app.listen(port, () => console.log(`Server is running on port ${port}`))
   } catch (error) {
     console.error('Error connecting to MongoDB: ', error)
