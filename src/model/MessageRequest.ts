@@ -1,4 +1,4 @@
-import { Schema, Document, model } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 // export interface MessageRequest extends Document {
 //   payload: object
@@ -6,7 +6,6 @@ import { Schema, Document, model } from 'mongoose'
 
 const messageRequestSchema: Schema = new Schema({
   payload: { type: Object, required: true },
-  email: { type: String, required: true },
   status: { type: String, default: 'pending' },
   timestamp: { type: Date, default: Date.now }
   // tbd

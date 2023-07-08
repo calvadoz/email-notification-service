@@ -1,38 +1,54 @@
 import { Request, Response } from 'express'
-import MessageRequest from '../model/Request'
+import MessageRequest from '../model/MessageRequest'
+
+type EmailMessage = {
+  to: string
+  subject?: string
+  message?: string
+}
 
 type MessageBody = {
-  payload: object
-  email: string
+  payload: EmailMessage
+  // email: string
   status?: string
   timestamp?: string
 }
 
 const hookRequestHandler = async (req: Request, res: Response) => {
   try {
-    // destructure email & payload from body
-    const { email, payload }: MessageBody = req.body
+    // destructure  payload from body
+    const { payload }: MessageBody = req.body
+    if (!validatePayload(payload)) {
+      res.sendStatus(400)
+      return
+    }
 
     // Commit to save to mongoDB
     const newMessageRequest = new MessageRequest({
-      email,
       payload
     })
 
     newMessageRequest
       .save()
-      .then(() => console.log('Message request saved successfully'))
+      .then(() =>
+        console.log('Message request saved successfully', newMessageRequest)
+      )
       .catch((err) => console.error('Error while saving request ', err))
 
-    // if (!payload) {
-    //   res.sendStatus(400)
-    //   return
-    // }
     res.sendStatus(200)
+    // call EmailService here then asynchronously without waiting
   } catch (err) {
     console.error('Error handling incoming request: ', err)
     res.sendStatus(500)
   }
+}
+
+function validatePayload(payload: EmailMessage) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  // console.log('Is Email Valid: ', emailRegex.test(payload.to))
+  if (!payload) return false
+  if (!emailRegex.test(payload.to)) return false
+  return true
 }
 
 export default { hookRequestHandler }

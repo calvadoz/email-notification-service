@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 import hookController from './controller/hookController'
+import sendEmail from './service/emailService'
 import dotenv from 'dotenv'
 import mongoose, { ConnectOptions } from 'mongoose'
 
@@ -27,9 +28,11 @@ async function connectToMongoDB() {
 
     // healthcheck endpoint for alive ping
     app.get('/api/healthcheck', (req: Request, res: Response) => {
-      const healthCheckMessage = 'Beep bop, I am healthy and alive'
-      res.status(200).json({ healthCheckMessage })
+      res.status(200).json('Beep bop, I am healthy and alive')
     })
+
+    // email service endpoint
+    app.get('/api/email/send', sendEmail.sendEmailHandler)
 
     // hook route entry point
     app.post('/api/hook', hookController.hookRequestHandler)
