@@ -12,6 +12,9 @@ This microservice provides an asynchronous Hook API for triggering Email Notific
 - Responds with a success status code without a response body content.
 - Ensures resiliency by handling database storage and external API calls for email delivery.
 
+## Flow Diagram
+![Application Flow Diagram](/out/diagram.png)
+
 ## Endpoints
 
 - `/api/hook` - **POST** - This is the main endpoint to be called. It accepts `payload` such as email related payload. For example:

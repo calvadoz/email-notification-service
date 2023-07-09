@@ -1,0 +1,17 @@
+@startuml
+actor Client
+participant "Email Notification Service"
+database "Database (MongoDB)"
+participant "Email Delivery Service"
+participant "Gmail API"
+
+Client -> "Email Notification Service": Send email request payload
+"Email Notification Service" --> Client: Send 200 OK Response if success
+group Asynchronous process
+    "Email Notification Service" -> "Database (MongoDB)": Store email request
+    "Email Notification Service" -> "Email Delivery Service": Create send email request
+    "Email Delivery Service" -> "Gmail API": Secure Authentication and fires Gmail API
+    "Gmail API" --> "Email Delivery Service": Success / Fail Response on Email Delivery Status
+    "Email Delivery Service" --> "Database (MongoDB)": Find record by ID and update email status
+end
+@enduml
