@@ -175,6 +175,16 @@ To test out the application, simply post a request to the `/api/hook` endpoint, 
 curl -X POST -H "Content-Type: application/json" -d '{ "payload": {"to": "test@example.com", "subject": "custom title emails"} }' http://localhost:4000/api/hook
 ```
 
+Follow the instruction on the console to authenticate the application (apologize since it is on developer mode). 
+If you see this lines of text on your console (you're on right track):
+```bash
+Authorize app by visiting this URL =>  https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send&response_type=code&client_id=423943159995-5ca454n0pcasktp130cong207o75mvb.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground
+
+Paste the authorization code from the URL:
+```
+
+Visit the link and paste the Authorization code accordingly to the backend console application
+
 7. To run test, simply execute the script in the `package.json`
 ```bash
 pnpm test
