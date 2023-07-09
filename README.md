@@ -13,7 +13,7 @@ This microservice provides an asynchronous Hook API for triggering Email Notific
 - Ensures resiliency by handling database storage and external API calls for email delivery.
 
 ## Flow Diagram
-![Application Flow Diagram](/out/diagram.png)
+![Application Flow Diagram](/diagram/diagram.png)
 
 ## Endpoints
 
