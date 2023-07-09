@@ -2,13 +2,14 @@ import express, { Request, Response } from 'express'
 import hookController from './controller/hookController'
 import sendEmail from './service/emailService'
 import dotenv from 'dotenv'
-import mongoose, { ConnectOptions } from 'mongoose'
+import mongoose from 'mongoose'
+import http from 'http'
 import MessageRequest from './model/MessageRequest'
+import { Server as SocketIOServer } from 'socket.io'
 
 dotenv.config()
 
 const port = process.env.PORT || 4000
-// setting up mongoDB
 const dbUsername = process.env.MONGODB_USERNAME
 const dbPassword = process.env.MONGODB_PASSWORD
 const dbName = process.env.MONGODB_DBNAME
@@ -16,13 +17,14 @@ const dbUri = `mongodb+srv://${dbUsername}:${dbPassword}@cluster0.atbza.mongodb.
 
 async function connectToMongoDB() {
   try {
-    // connect to cloud mongoDB, please contact me for access whitelisting if starting server throws access error
     await mongoose.connect(dbUri)
-
     console.log('Connected to MongoDB')
-    const app = express()
 
-    // enable CORS for frontend to connect of course
+    const app = express()
+    const server = http.createServer(app)
+
+    app.use(express.json())
+
     app.use((req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*')
       res.header('Access-Control-Allow-Methods', 'GET, POST')
@@ -33,33 +35,37 @@ async function connectToMongoDB() {
       next()
     })
 
-    app.use(express.json())
-
-    // route setup
-    // decided not to setup default route, security, less route less concern :)
-
-    // healthcheck endpoint for alive ping
     app.get('/api/healthcheck', (req: Request, res: Response) => {
       res.status(200).json('Beep bop, I am healthy and alive')
     })
 
-    // email service endpoint
     app.post('/api/email/send', sendEmail.sendEmailHandler)
 
-    // hook route entry point
     app.post('/api/hook', hookController.hookRequestHandler)
 
-    // list all
     app.get('/api/email/list', async (req: Request, res: Response) => {
       const messageList = await MessageRequest.find()
       res.status(200).json(messageList.reverse())
     })
 
-    app.get('/auth/callback', (req: Request, res: Response) => {
-      res.status(200).json(JSON.stringify(req))
+    const socketServer = new SocketIOServer(server, {
+      // cors just for my local development for now
+      cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST']
+      }
     })
 
-    app.listen(port, () => console.log(`Server is running on port ${port}`))
+    socketServer.on('connection', (socket) => {
+      console.log('WebSocket client connected')
+
+      socket.on('message', (message: string) => {
+        console.log(`Received message from client: ${message}`)
+        socket.send('Echo: ' + message)
+      })
+    })
+
+    server.listen(port, () => console.log(`Server is running on port ${port}`))
   } catch (error) {
     console.error('Error connecting to MongoDB: ', error)
   }
