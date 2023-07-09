@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import MessageRequest from '../model/MessageRequest'
 import axios from 'axios'
 import { sendMessage } from '..'
+import { EmailEvent, MessagePayload } from '../model/types'
 
 type EmailMessage = {
   to: string
@@ -35,7 +36,12 @@ const hookRequestHandler = async (req: Request, res: Response) => {
     try {
       await newMessageRequest.save()
       console.log('Message request saved successfully', newMessageRequest)
-      sendMessage('Hello from hook controller')
+      const messageAddedPayload: MessagePayload = {
+        emailEventType: EmailEvent.EMAIL_ADDED,
+        payload: newMessageRequest.payload
+      }
+      console.log(JSON.stringify(messageAddedPayload))
+      sendMessage(JSON.stringify(messageAddedPayload))
     } catch (err) {
       console.error('Error while saving request ', err)
     }

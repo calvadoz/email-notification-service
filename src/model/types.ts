@@ -9,3 +9,13 @@ export type MessageBody = {
   status?: string
   timestamp?: string
 }
+
+export enum EmailEvent {
+  EMAIL_ADDED = 'EMAIL_ADDED',
+  EMAIL_UPDATED = 'EMAIL_UPDATED',
+}
+
+export type MessagePayload = {
+  emailEventType: EmailEvent
+  payload: object
+}

@@ -1,7 +1,7 @@
 import { google, gmail_v1 } from 'googleapis'
 import readline from 'readline'
 import { Request, Response } from 'express'
-import { EmailMessage } from '../model/types'
+import { EmailEvent, EmailMessage, MessagePayload } from '../model/types'
 import MessageRequest from '../model/MessageRequest'
 import { sendMessage } from '..'
 
@@ -45,12 +45,20 @@ const sendEmailHandler = async (req: Request, res: Response) => {
     console.log('Email sent:', gmailRes.data)
     // update mongoDB data upon successful
     await updateEmailStatus(messageId, true)
-    sendMessage('Hello from hook controller')
+    const messageAddedPayload: MessagePayload = {
+      emailEventType: EmailEvent.EMAIL_UPDATED,
+      payload: messageId
+    }
+    sendMessage(JSON.stringify(messageAddedPayload))
     res.status(200)
   } catch (error) {
     console.error('Error sending email:', error)
     await updateEmailStatus(messageId, false)
-    sendMessage('Hello from hook controller')
+    const messageAddedPayload: MessagePayload = {
+      emailEventType: EmailEvent.EMAIL_UPDATED,
+      payload: messageId
+    }
+    sendMessage(JSON.stringify(messageAddedPayload))
     res.status(500).json({ errorMessage: 'Failed to send Email' })
   }
 }
