@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import MessageRequest from '../model/MessageRequest'
 import axios from 'axios'
+import { sendMessage } from '..'
 
 type EmailMessage = {
   to: string
@@ -34,12 +35,13 @@ const hookRequestHandler = async (req: Request, res: Response) => {
     try {
       await newMessageRequest.save()
       console.log('Message request saved successfully', newMessageRequest)
+      sendMessage('Hello from hook controller')
     } catch (err) {
       console.error('Error while saving request ', err)
     }
 
     res.sendStatus(200)
-    // additional call to EmailService asynchronously without waiting
+    // // additional call to EmailService asynchronously without waiting
     axios.post(`${gatewayURI}/api/email/send`, newMessageRequest)
   } catch (err) {
     console.error('Error handling incoming request: ', err)

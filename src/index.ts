@@ -9,6 +9,7 @@ import { Server as SocketIOServer } from 'socket.io'
 
 dotenv.config()
 
+let socketServer: SocketIOServer
 const port = process.env.PORT || 4000
 const dbUsername = process.env.MONGODB_USERNAME
 const dbPassword = process.env.MONGODB_PASSWORD
@@ -44,11 +45,12 @@ async function connectToMongoDB() {
     app.post('/api/hook', hookController.hookRequestHandler)
 
     app.get('/api/email/list', async (req: Request, res: Response) => {
+      sendMessage('Hello')
       const messageList = await MessageRequest.find()
       res.status(200).json(messageList.reverse())
     })
 
-    const socketServer = new SocketIOServer(server, {
+    socketServer = new SocketIOServer(server, {
       // cors just for my local development for now
       cors: {
         origin: 'http://localhost:3000',
@@ -68,6 +70,12 @@ async function connectToMongoDB() {
     server.listen(port, () => console.log(`Server is running on port ${port}`))
   } catch (error) {
     console.error('Error connecting to MongoDB: ', error)
+  }
+}
+
+export function sendMessage(message: string) {
+  if (socketServer) {
+    socketServer.emit('message', message);
   }
 }
 
