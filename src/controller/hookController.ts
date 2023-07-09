@@ -40,7 +40,6 @@ const hookRequestHandler = async (req: Request, res: Response) => {
         emailEventType: EmailEvent.EMAIL_ADDED,
         payload: newMessageRequest.payload
       }
-      console.log(JSON.stringify(messageAddedPayload))
       sendMessage(JSON.stringify(messageAddedPayload))
     } catch (err) {
       console.error('Error while saving request ', err)

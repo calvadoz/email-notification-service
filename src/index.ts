@@ -45,8 +45,12 @@ async function connectToMongoDB() {
     app.post('/api/hook', hookController.hookRequestHandler)
 
     app.get('/api/email/list', async (req: Request, res: Response) => {
-      const messageList = await MessageRequest.find()
-      res.status(200).json(messageList.reverse())
+      try {
+        const messageList = await MessageRequest.find()
+        res.status(200).json(messageList.reverse())
+      } catch (err) {
+        res.status(500)
+      }
     })
 
     socketServer = new SocketIOServer(server, {
@@ -75,7 +79,7 @@ async function connectToMongoDB() {
 export function sendMessage(message: string) {
   if (socketServer) {
     console.log(message)
-    socketServer.emit('message', message);
+    socketServer.emit('message', message)
   }
 }
 
